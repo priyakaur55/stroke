@@ -3,10 +3,11 @@ import pickle
 import numpy as np
 
 # Load the trained model
-model = pickle.load(open('model.sav', 'rb'))
+model1 = pickle.load(open('model.sav', 'rb'))
+model2 = pickle.load(open('model2.sav', 'rb'))
 
 # Function to predict stroke based on input features
-def predict_stroke(features):
+def predict_stroke(model, features):
     features = np.array(features).reshape(1, -1)
     prediction = model.predict(features)
     probability = model.predict_proba(features)[0][1]
@@ -56,13 +57,25 @@ def main():
     }
     work_type = work_type_map[work_type]
 
+    #choose which model to use
+    selected_model = st.selectbox ("Select Model", ("Model 1", "Model 2"))
+
+    #convert selected model to actual model type
+
+    if selected_model == "Model 1":
+       selected_model = model1
+    else:
+        selected_model = model2
+    
+
+
     # Create a button to predict stroke
     if st.button("Predict Stroke"):
         # Gather input features
         features = [age, hypertension, heart_disease, avg_glucose_level, bmi, gender, smoking_status, ever_married, work_type, residence_type]
 
         # Predict stroke and probability
-        prediction, probability = predict_stroke(features)
+        prediction, probability = predict_stroke(selected_model, features)
 
         # Display the prediction
         if prediction[0] == 0:
